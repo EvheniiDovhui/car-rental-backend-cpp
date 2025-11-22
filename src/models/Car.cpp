@@ -28,9 +28,11 @@ crow::json::wvalue Car::toJSON() const{
 
 void Car::fromJSON(const crow::json::rvalue& json) {
 
-    if (json.has("id")) this->id = json["id"].i();
-    if (json.has("brand")) this->brand = json["brand"].s();
-    if (json.has("model")) this->model = json["model"].s();
-    if (json.has("year")) this->year = json["year"].i();
-    if (json.has("pricePerDay")) this->pricePerDay = json["pricePerDay"].d();
+    try {
+        this->id = json["id"].i();
+        this->brand = json["brand"].s();
+        this->model = json["model"].s();
+        this->year = json["year"].i();
+        this->pricePerDay = json["pricePerDay"].d();
+    } catch (const std::exception& e) {}
 }
