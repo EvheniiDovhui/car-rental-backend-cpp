@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <crow.h>
 
 class Car {
 private:
@@ -17,4 +18,13 @@ public:
     std::string getModel() const;
     int getYear() const;
     double getPricePerDay() const;
+
+    void setId(const int&);
+    void setBrand(const std::string&);
+    void setModel(const std::string&);
+    void setYear(const int&);
+    void setPricePerDay(const double&);
+
+    crow::json::wvalue toJSON() const;
+    void fromJSON(const crow::json::rvalue& json);
 };
