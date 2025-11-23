@@ -19,3 +19,13 @@ Car CarRepository::findById(int& id){
     return;
 }
 
+bool CarRepository::removeCar(int& id){
+    for(size_t i = 0; i < cars.size(); i++){
+        if(cars[i].getId() == id){
+            cars.erase(cars.begin() + i);
+            return true;
+        }
+    }
+    
+    return false;
+}
