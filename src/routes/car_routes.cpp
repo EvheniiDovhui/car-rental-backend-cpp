@@ -1,5 +1,6 @@
 #include "routes/car_routes.h"
 
+template <typename T>
 void registerCarRoutes(crow::SimpleApp& app, CarController& controller) {
     CROW_ROUTE(app, "/api/cars")([&controller]() {
         return controller.getCars();

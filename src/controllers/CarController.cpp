@@ -1,6 +1,7 @@
 #include "controllers/CarController.h"
 
-CarController::CarController(CarService& service) : service(service) {}
+CarController::CarController(CarService& service)
+    : service(service) {}
 
 crow::response CarController::getCars() {
     auto cars = service.getAllCars();
@@ -14,7 +15,5 @@ crow::response CarController::getCars() {
         json[i]["pricePerDay"] = cars[i].getPricePerDay();
     }
 
-    crow::response res(json);
-    res.add_header("Access-Control-Allow-Origin", "*");
-    return res;
+    return json; // Crow сам підготує response
 }
