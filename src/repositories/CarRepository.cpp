@@ -26,6 +26,15 @@ bool CarRepository::removeCar(int& id){
             return true;
         }
     }
-    
+    return false;
+}
+
+bool CarRepository::updateCar(const Car& updateCar){
+    for (auto& car : cars) {
+        if (car.getId() == updateCar.getId()) {
+            car = updateCar; 
+            return true;    
+        }
+    }
     return false;
 }
