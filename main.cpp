@@ -23,7 +23,7 @@ int main() {
     UserService userService(userRepository);
     initAuthRoutes(app, userService);
 
-    // Обробка preflight
+    // Handle preflight
     CROW_ROUTE(app, "/api/<path>").methods("OPTIONS"_method)
     ([](const crow::request&, crow::response& res, std::string){
         res.code = 200;
