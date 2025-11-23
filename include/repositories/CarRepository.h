@@ -2,9 +2,11 @@
 #include <vector>
 #include "models/Car.h"
 
+using namespace std;
+
 class CarRepository {
 private:
-    std::vector<Car> cars;
+    vector<Car> cars;
 
 public:
     const std::vector<Car>& getAllCars() const;
