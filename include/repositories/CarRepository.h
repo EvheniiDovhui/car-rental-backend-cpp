@@ -2,11 +2,15 @@
 #include <vector>
 #include "Car.h"
 
+using namespace std;
+
 class CarRepository {
 private:
-    std::vector<Car> cars;
+    vector<Car> cars;
 
 public:
     void addCar(const Car& car);
-    std::vector<Car> getAllCars() const;
+    Car findById(int& id);
+    bool removeCar(int& id);
+    vector<Car> getAllCars() const;
 };
