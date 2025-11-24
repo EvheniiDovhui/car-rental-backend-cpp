@@ -1,41 +1,65 @@
 #include "models/Car.h"
-#include <string>
 
-using namespace std;
+Car::Car() : id(0), year(0), pricePerDay(0.0) {}
 
-Car::Car(int id, string brand, string model, int year, double pricePerDay)
-    : id(id), brand(brand), model(model), year(year), pricePerDay(pricePerDay) {}
-
+// Геттери (додай реалізацію нових)
 int Car::getId() const { return id; }
 string Car::getBrand() const { return brand; }
 string Car::getModel() const { return model; }
 int Car::getYear() const { return year; }
 double Car::getPricePerDay() const { return pricePerDay; }
 
-void Car::setId(const int& id) { this->id = id; }
-void Car::setBrand(const string& brand) { this->brand = brand; }
-void Car::setModel(const string& model) { this->model = model; }
-void Car::setYear(const int& year) { this->year = year; }
-void Car::setPricePerDay(const double& pricePerDay) { this->pricePerDay = pricePerDay; }
+string Car::getTransmission() const { return transmission; }
+string Car::getFuel() const { return fuel; }
+string Car::getEngine() const { return engine; }
+string Car::getDescription() const { return description; }
+string Car::getImage() const { return image; }
 
-
-crow::json::wvalue Car::toJSON() const{
+// Оновлений toJSON
+crow::json::wvalue Car::toJSON() const
+{
     crow::json::wvalue json;
-    json["id"] = this->id;
-    json["brand"] = this->brand;
-    json["model"] = this->model;
-    json["year"] = this->year;
-    json["pricePerDay"] = this->pricePerDay;
+    json["id"] = id;
+    json["brand"] = brand;
+    json["model"] = model;
+    json["year"] = year;
+    json["pricePerDay"] = pricePerDay;
+
+    // 🔥 Додаємо нові поля у відповідь
+    json["transmission"] = transmission;
+    json["fuel"] = fuel;
+    json["engine"] = engine;
+    json["description"] = description;
+    json["image"] = image;
+
     return json;
 }
 
-void Car::fromJSON(const crow::json::rvalue& json) {
+// Оновлений fromJSON
+void Car::fromJSON(const crow::json::rvalue &json)
+{
+    try
+    {
+        id = json["id"].i();
+        brand = json["brand"].s();
+        model = json["model"].s();
+        year = json["year"].i();
+        pricePerDay = json["pricePerDay"].d();
 
-    try {
-        this->id = json["id"].i();
-        this->brand = json["brand"].s();
-        this->model = json["model"].s();
-        this->year = json["year"].i();
-        this->pricePerDay = json["pricePerDay"].d();
-    } catch (const exception& e) {}
+        // 🔥 Читаємо нові поля (з перевіркою, щоб не впало на старих файлах)
+        if (json.has("transmission"))
+            transmission = json["transmission"].s();
+        if (json.has("fuel"))
+            fuel = json["fuel"].s();
+        if (json.has("engine"))
+            engine = json["engine"].s();
+        if (json.has("description"))
+            description = json["description"].s();
+        if (json.has("image"))
+            image = json["image"].s();
+    }
+    catch (...)
+    {
+        // Ігноруємо помилки парсингу
+    }
 }

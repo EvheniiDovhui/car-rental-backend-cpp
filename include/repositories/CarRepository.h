@@ -4,14 +4,17 @@
 
 using namespace std;
 
-class CarRepository {
+class CarRepository
+{
 private:
     vector<Car> cars;
 
 public:
-    const std::vector<Car>& getAllCars() const;
-    void addCar(const Car& car);
+    const std::vector<Car> &getAllCars() const;
+    void addCar(const Car &car);
 
-    void save();  // ⬅ додай
-    void load();  // необов’язково, але логічно
+    void save(); // ⬅ додай
+    void load(); // необов’язково, але логічно
+    Car findById(int &id);
+    bool removeCar(int &id);
 };
