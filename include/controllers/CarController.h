@@ -1,12 +1,13 @@
 #pragma once
-#include "services/CarService.h"
 #include "crow.h"
+#include "services/CarService.h"
 
-class CarController {
-private:
-    CarService& service;
+class CarController
+{
+    CarService &service;
 
 public:
-    CarController(CarService& service);
-    crow::response getCars();
+    CarController(CarService &service);
+    crow::response getCars(const crow::request &req);
+    crow::response getCar(int id);
 };

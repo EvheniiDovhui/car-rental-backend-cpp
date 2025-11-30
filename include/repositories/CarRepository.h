@@ -1,16 +1,19 @@
 #pragma once
 #include <vector>
-#include "Car.h"
+#include "models/Car.h"
 
 using namespace std;
 
-class CarRepository {
-private:
+class CarRepository
+{
     vector<Car> cars;
 
 public:
-    void addCar(const Car& car);
-    Car findById(int& id);
-    bool removeCar(int& id);
-    vector<Car> getAllCars() const;
+    const vector<Car> &getAllCars() const;
+    void addCar(const Car &car);
+
+    void save();
+    void load();
+    Car findById(int &id);
+    bool removeCar(int &id);
 };

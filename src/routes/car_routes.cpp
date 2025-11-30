@@ -1,14 +1,13 @@
 #include "routes/car_routes.h"
+#include "crow/middlewares/cors.h"
 
-void registerCarRoutes(crow::SimpleApp& app, CarController& controller) {
-    CROW_ROUTE(app, "/api/cars")([&controller]() {
-        return controller.getCars();
-    });
+void registerCarRoutes(crow::App<crow::CORSHandler> &app, CarController &controller)
+{
+    CROW_ROUTE(app, "/api/cars")
+    ([&controller](const crow::request &req)
+     { return controller.getCars(req); });
 
-    CROW_ROUTE(app, "/api/cars").methods("OPTIONS"_method)([]() {
-        crow::response res;
-        res.add_header("Access-Control-Allow-Origin", "*");
-        res.add_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-        return res;
-    });
+    CROW_ROUTE(app, "/api/cars/<int>")
+    ([&controller](int id)
+     { return controller.getCar(id); });
 }

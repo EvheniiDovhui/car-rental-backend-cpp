@@ -4,16 +4,21 @@
 
 using namespace std;
 
-class Car {
-private:
+class Car
+{
     int id;
     string brand;
     string model;
     int year;
     double pricePerDay;
+    string transmission;
+    string fuel;
+    string engine;
+    string description;
+    string image;
 
 public:
-    Car(int id, string brand, string model, int year, double pricePerDay);
+    Car();
 
     int getId() const;
     string getBrand() const;
@@ -21,12 +26,12 @@ public:
     int getYear() const;
     double getPricePerDay() const;
 
-    void setId(const int&);
-    void setBrand(const string&);
-    void setModel(const string&);
-    void setYear(const int&);
-    void setPricePerDay(const double&);
+    string getTransmission() const;
+    string getFuel() const;
+    string getEngine() const;
+    string getDescription() const;
+    string getImage() const;
 
     crow::json::wvalue toJSON() const;
-    void fromJSON(const crow::json::rvalue& json);
+    void fromJSON(const crow::json::rvalue &json);
 };

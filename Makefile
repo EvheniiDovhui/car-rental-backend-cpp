@@ -1,5 +1,6 @@
 CXX = g++
-CXXFLAGS = -std=c++17 -Iinclude -Ilibs/crow/include -Ilibs/asio/include
+CXXFLAGS = -std=c++17 -Iinclude -Iinclude/** -Ilibs/crow/include -Ilibs/asio/include
+
 LDFLAGS = -lws2_32 -lmswsock
 
 SRC = $(wildcard src/*.cpp src/**/*.cpp)

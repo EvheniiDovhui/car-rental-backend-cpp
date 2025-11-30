@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "brand": "Toyota",
+    "model": "Camry",
+    "year": 2022,
+    "pricePerDay": 55.0,
+    "transmission": "Автомат",
+    "fuel": "Гібрид",
+    "engine": "2.5L",
+    "description": "Комфортний седан бізнес-класу з чудовою економією палива. Ідеальний для міста та дальніх поїздок.",
+    "image": "https://files2.aster.kz/market/users/2023-6/c846049_46adfe5c-a577-46af-9729-58829d858f4b_L_blur_resolution1920x1920.webp"
+  },
+  {
+    "id": 2,
+    "brand": "BMW",
+    "model": "X5",
+    "year": 2021,
+    "pricePerDay": 120.0,
+    "transmission": "Автомат",
+    "fuel": "Дизель",
+    "engine": "3.0L",
+    "description": "Потужний позашляховик з преміальним салоном та спортивним характером.",
+    "image": "https://cdn.motor1.com/images/mgl/0oXvz/s1/2021-bmw-x5-xdrive45e-exterior-front-view.jpg"
+  },
+  {
+    "id": 3,
+    "brand": "Honda",
+    "model": "Civic",
+    "year": 2019,
+    "pricePerDay": 40.0,
+    "transmission": "Варіатор",
+    "fuel": "Бензин",
+    "engine": "1.5L Turbo",
+    "description": "Надійний та динамічний компактний автомобіль. Чудовий вибір для економних подорожей.",
+    "image": "https://cars.ua/thumb/car/20210622/w933/h622/q80/kupit-honda-civic-sport-odessa-2796657.jpg"
+  },
+  {
+    "id": 4,
+    "brand": "Mercedes",
+    "model": "E-Class",
+    "year": 2023,
+    "pricePerDay": 150.0,
+    "transmission": "Автомат",
+    "fuel": "Бензин",
+    "engine": "2.0L",
+    "description": "Еталон комфорту та технологічності. Розкішний інтер'єр та м'яка підвіска.",
+    "image": "https://i.infocar.ua/i/2/7010/131236/1920x.jpg"
+  },
+  {
+    "id": 5,
+    "brand": "Tesla",
+    "model": "Model 3",
+    "year": 2023,
+    "pricePerDay": 100.0,
+    "transmission": "Автомат",
+    "fuel": "Електро",
+    "engine": "Elektro",
+    "description": "Інноваційний електрокар з автопілотом та миттєвим прискоренням. Запас ходу до 500 км.",
+    "image": "https://www.carsized.com/resources/tesla/model-3/d/2017/fa_255000000_tesla-model-3-2017-front-view_4x.png"
+  }
+]
