@@ -2,32 +2,29 @@
 #include "services/CarService.h"
 #include "models/Car.h"
 
-CarController::CarController(CarService &service)
-    : service(service) {}
+using namespace std;
 
-// Отримання списку (з фільтрацією)
+CarController::CarController(CarService &service) : service(service) {}
+
 crow::response CarController::getCars(const crow::request &req)
 {
-    // Зчитуємо параметри з URL (?brand=BMW&maxPrice=100)
     const char *brandParam = req.url_params.get("brand");
     const char *priceParam = req.url_params.get("maxPrice");
 
-    std::string brand = brandParam ? brandParam : "";
-    double maxPrice = priceParam ? std::stod(priceParam) : 0.0;
+    string brand = brandParam ? brandParam : "";
+    double maxPrice = priceParam ? stod(priceParam) : 0.0;
 
-    // Викликаємо сервіс (який ми оновили раніше)
     auto cars = service.getCars(brand, maxPrice);
 
     crow::json::wvalue json;
     for (size_t i = 0; i < cars.size(); i++)
     {
-        json[i] = cars[i].toJSON(); // Використовуємо метод моделі
+        json[i] = cars[i].toJSON();
     }
 
     return crow::response(json);
 }
 
-// Отримання одного авто (для сторінки бронювання)
 crow::response CarController::getCar(int id)
 {
     try

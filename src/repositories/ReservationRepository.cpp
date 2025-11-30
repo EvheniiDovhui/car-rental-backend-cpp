@@ -1,11 +1,11 @@
 #include "repositories/ReservationRepository.h"
 #include <fstream>
 #include <iostream>
-#include <algorithm> // для std::max і std::min якщо потрібно
+#include <algorithm>
 
 ReservationRepository::ReservationRepository()
 {
-    load(); // Завантажуємо дані одразу при створенні
+    load();
 }
 
 void ReservationRepository::add(const Reservation &res)
@@ -25,14 +25,14 @@ void ReservationRepository::add(const Reservation &res)
     save();
 }
 
-std::vector<Reservation> ReservationRepository::getAll()
+vector<Reservation> ReservationRepository::getAll()
 {
     return reservations;
 }
 
 void ReservationRepository::save()
 {
-    std::ofstream file(DB_FILE);
+    ofstream file(DB_FILE);
     if (!file.is_open())
         return;
 
@@ -46,13 +46,13 @@ void ReservationRepository::save()
 
 void ReservationRepository::load()
 {
-    std::ifstream file(DB_FILE);
+    ifstream file(DB_FILE);
     if (!file.is_open())
         return;
 
-    std::stringstream buffer;
+    stringstream buffer;
     buffer << file.rdbuf();
-    std::string content = buffer.str();
+    string content = buffer.str();
 
     if (content.empty())
         return;
@@ -71,7 +71,6 @@ void ReservationRepository::load()
         res.startDate = item["startDate"].s();
         res.endDate = item["endDate"].s();
 
-        // Обробка totalPrice (може бути int або double)
         if (item.has("totalPrice"))
         {
             if (item["totalPrice"].t() == crow::json::type::Number)
@@ -89,21 +88,17 @@ void ReservationRepository::load()
     }
 }
 
-// 🔥 РЕАЛІЗАЦІЯ ПЕРЕВІРКИ
-bool ReservationRepository::isCarAvailable(int carId, const std::string &newStart, const std::string &newEnd)
+bool ReservationRepository::isCarAvailable(int carId, const string &newStart, const string &newEnd)
 {
     for (const auto &r : reservations)
     {
-        // Перевіряємо тільки бронювання тієї ж машини
         if (r.carId == carId)
         {
-            // Логіка перетину:
-            // (StartA <= EndB) && (StartB <= EndA)
             if (r.startDate <= newEnd && newStart <= r.endDate)
             {
-                return false; // Є перетин, машина зайнята
+                return false;
             }
         }
     }
-    return true; // Перетинів не знайдено, вільно
+    return true;
 }

@@ -4,19 +4,20 @@
 #include "models/Car.h"
 #include "repositories/CarRepository.h"
 
+using namespace std;
+
 class CarService
 {
-private:
     CarRepository &repo;
 
 public:
     CarService(CarRepository &repository);
 
     // Базові методи
-    std::vector<Car> getAllCars();
+    vector<Car> getAllCars();
     void addCar(const Car &car);
 
     // --- ДОДАНО ЦІ ДВА МЕТОДИ ---
     Car getCarById(int id);
-    std::vector<Car> getCars(const std::string &brand = "", double maxPrice = 0.0);
+    vector<Car> getCars(const string &brand = "", double maxPrice = 0.0);
 };

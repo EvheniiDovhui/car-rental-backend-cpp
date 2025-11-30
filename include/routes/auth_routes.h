@@ -2,18 +2,19 @@
 #include "crow.h"
 #include "services/UserService.h"
 
-template <typename App>
-void initAuthRoutes(App& app, UserService& service) {
+using namespace std;
 
-    // --- LOGIN ---
-    CROW_ROUTE(app, "/api/login").methods("POST"_method)
-    ([&service](const crow::request& req){
+template <typename App>
+void initAuthRoutes(App &app, UserService &service)
+{
+    CROW_ROUTE(app, "/api/login").methods("POST"_method)([&service](const crow::request &req)
+                                                         {
         auto data = crow::json::load(req.body);
         if(!data)
             return crow::json::wvalue({ {"status", "error"}, {"error", "Invalid JSON"} });
 
-        std::string email = data["email"].s();
-        std::string password = data["password"].s();
+        string email = data["email"].s();
+        string password = data["password"].s();
 
         auto userOpt = service.findUserByCredentials(email, password);
 
@@ -30,19 +31,17 @@ void initAuthRoutes(App& app, UserService& service) {
                 {"name", user.getName()},
                 {"email", user.getEmail()}
             }}
-        });
-    });
+        }); });
 
-    // --- REGISTER ---
-    CROW_ROUTE(app, "/api/register").methods("POST"_method)
-    ([&service](const crow::request& req){
+    CROW_ROUTE(app, "/api/register").methods("POST"_method)([&service](const crow::request &req)
+                                                            {
         auto data = crow::json::load(req.body);
         if(!data)
             return crow::json::wvalue({ {"status", "error"}, {"error", "Invalid JSON"} });
 
-        std::string name = data["name"].s();
-        std::string email = data["email"].s();
-        std::string password = data["password"].s();
+        string name = data["name"].s();
+        string email = data["email"].s();
+        string password = data["password"].s();
 
         bool ok = service.registerUser(name, email, password);
 
@@ -52,21 +51,19 @@ void initAuthRoutes(App& app, UserService& service) {
         return crow::json::wvalue({
             {"status", "success"},
             {"message", "User registered"}
-        });
-    });
+        }); });
 
-    // --- UPDATE PROFILE ---
-CROW_ROUTE(app, "/api/profile").methods("PUT"_method)
-([&service](const crow::request& req){
+    CROW_ROUTE(app, "/api/profile").methods("PUT"_method)([&service](const crow::request &req)
+                                                          {
     auto data = crow::json::load(req.body);
     if (!data)
         return crow::json::wvalue({{"status", "error"}, {"error", "Invalid JSON"}});
 
-    int id = data["id"].i(); // 🔥 тимчасово так, потім через токен
+    int id = data["id"].i();
 
-    std::string name = data["name"].s();
-    std::string email = data["email"].s();
-    std::string password = data["password"].s();
+    string name = data["name"].s();
+    string email = data["email"].s();
+    string password = data["password"].s();
 
     auto userOpt = service.updateUser(id, name, email, password);
 
@@ -82,7 +79,5 @@ CROW_ROUTE(app, "/api/profile").methods("PUT"_method)
             {"name", user.getName()},
             {"email", user.getEmail()}
         }}
-    });
-});
-
+    }); });
 }

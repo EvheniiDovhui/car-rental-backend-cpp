@@ -6,14 +6,11 @@ using namespace std;
 
 class Car
 {
-private:
     int id;
     string brand;
     string model;
     int year;
     double pricePerDay;
-
-    // 🔥 НОВІ ПОЛЯ
     string transmission;
     string fuel;
     string engine;
@@ -22,9 +19,7 @@ private:
 
 public:
     Car();
-    // Можна розширити конструктор, але не обов'язково, якщо є сеттери
 
-    // Геттери
     int getId() const;
     string getBrand() const;
     string getModel() const;
@@ -37,7 +32,6 @@ public:
     string getDescription() const;
     string getImage() const;
 
-    // JSON методи
     crow::json::wvalue toJSON() const;
     void fromJSON(const crow::json::rvalue &json);
 };

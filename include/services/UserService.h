@@ -5,18 +5,19 @@
 #include "models/User.h"
 #include <vector>
 
+using namespace std;
+
 class UserService
 {
-private:
     UserRepository &repository;
 
 public:
     UserService(UserRepository &repo) : repository(repo) {}
 
-    bool registerUser(const std::string &name, const std::string &email, const std::string &password);
-    bool loginUser(const std::string &email, const std::string &password);
+    bool registerUser(const string &name, const string &email, const string &password);
+    bool loginUser(const string &email, const string &password);
 
-    std::optional<User> findUserByCredentials(const std::string &email, const std::string &password);
-    std::optional<User> updateUser(int id, const std::string &name, const std::string &email, const std::string &password);
-    std::vector<int> toggleFavorite(int userId, int carId);
+    optional<User> findUserByCredentials(const string &email, const string &password);
+    optional<User> updateUser(int id, const string &name, const string &email, const string &password);
+    vector<int> toggleFavorite(int userId, int carId);
 };

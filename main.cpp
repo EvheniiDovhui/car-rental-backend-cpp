@@ -10,6 +10,8 @@
 #include "models/Reservation.h"
 #include "repositories/ReservationRepository.h"
 
+using namespace std;
+
 int main()
 {
     crow::App<crow::CORSHandler> app;
@@ -23,9 +25,8 @@ int main()
         .methods("GET"_method, "POST"_method, "PUT"_method, "DELETE"_method, "OPTIONS"_method)
         .max_age(3600);
 
-    // 🔥 ОДИН раз створюємо репозиторій
     UserRepository userRepository;
-    userRepository.load(); // якщо load() існує
+    userRepository.load();
 
     UserService userService(userRepository);
     initAuthRoutes(app, userService);
@@ -36,9 +37,8 @@ int main()
     CarController carController(carService);
     registerCarRoutes(app, carController);
 
-    ReservationRepository reservationRepo; // Створюємо репозиторій
+    ReservationRepository reservationRepo;
 
-    // Handle preflight
     CROW_ROUTE(app, "/api/reserve").methods("POST"_method)([&](const crow::request &req)
                                                            {
         auto json = crow::json::load(req.body);
@@ -48,12 +48,11 @@ int main()
             !json.has("startDate") || !json.has("endDate") || !json.has("totalPrice")) {
             return crow::response(400, "Missing required fields");
         }
-
         try {
             int userId = json["userId"].i();
             int carId = json["carId"].i();
-            std::string start = json["startDate"].s();
-            std::string end = json["endDate"].s();
+            string start = json["startDate"].s();
+            string end = json["endDate"].s();
             double price = 0.0;
             
             if (json["totalPrice"].t() == crow::json::type::Number)
@@ -61,12 +60,11 @@ int main()
             else
                 price = (double)json["totalPrice"].i();
 
-            // 🔥 ПЕРЕВІРКА ДОСТУПНОСТІ
             if (!reservationRepo.isCarAvailable(carId, start, end)) {
                 crow::json::wvalue err;
                 err["status"] = "error";
                 err["error"] = "Авто вже заброньовано на обрані дати!";
-                return crow::response(409, err); // 409 Conflict
+                return crow::response(409, err);
             }
 
             Reservation newRes;
@@ -84,12 +82,10 @@ int main()
             
             return crow::response(200, res);
 
-        } catch (const std::exception& e) {
-            std::cout << "Error: " << e.what() << std::endl;
+        } catch (const exception& e) {
+            cout << "Error: " << e.what() << endl;
             return crow::response(400, "Invalid data");
         } });
-
-    // Додай це десь перед app.run()
 
     CROW_ROUTE(app, "/api/favorites").methods("POST"_method)([&userService](const crow::request &req)
                                                              {
@@ -100,16 +96,14 @@ int main()
         int carId = x["carId"].i();
 
         try {
-            // Викликаємо функцію з UserService
             auto newFavs = userService.toggleFavorite(userId, carId);
             
-            // Повертаємо оновлений список
             crow::json::wvalue res;
             res["status"] = "success";
             
             crow::json::wvalue favArr;
             for(size_t i=0; i<newFavs.size(); ++i) favArr[i] = newFavs[i];
-            res["favorites"] = std::move(favArr);
+            res["favorites"] = move(favArr);
 
             return crow::response(200, res);
         } catch (...) {

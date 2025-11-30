@@ -2,7 +2,6 @@
 
 Car::Car() : id(0), year(0), pricePerDay(0.0) {}
 
-// Геттери (додай реалізацію нових)
 int Car::getId() const { return id; }
 string Car::getBrand() const { return brand; }
 string Car::getModel() const { return model; }
@@ -15,7 +14,6 @@ string Car::getEngine() const { return engine; }
 string Car::getDescription() const { return description; }
 string Car::getImage() const { return image; }
 
-// Оновлений toJSON
 crow::json::wvalue Car::toJSON() const
 {
     crow::json::wvalue json;
@@ -25,7 +23,6 @@ crow::json::wvalue Car::toJSON() const
     json["year"] = year;
     json["pricePerDay"] = pricePerDay;
 
-    // 🔥 Додаємо нові поля у відповідь
     json["transmission"] = transmission;
     json["fuel"] = fuel;
     json["engine"] = engine;
@@ -35,7 +32,6 @@ crow::json::wvalue Car::toJSON() const
     return json;
 }
 
-// Оновлений fromJSON
 void Car::fromJSON(const crow::json::rvalue &json)
 {
     try
@@ -46,7 +42,6 @@ void Car::fromJSON(const crow::json::rvalue &json)
         year = json["year"].i();
         pricePerDay = json["pricePerDay"].d();
 
-        // 🔥 Читаємо нові поля (з перевіркою, щоб не впало на старих файлах)
         if (json.has("transmission"))
             transmission = json["transmission"].s();
         if (json.has("fuel"))
@@ -60,6 +55,5 @@ void Car::fromJSON(const crow::json::rvalue &json)
     }
     catch (...)
     {
-        // Ігноруємо помилки парсингу
     }
 }

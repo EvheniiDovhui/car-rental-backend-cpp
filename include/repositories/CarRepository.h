@@ -6,15 +6,14 @@ using namespace std;
 
 class CarRepository
 {
-private:
     vector<Car> cars;
 
 public:
-    const std::vector<Car> &getAllCars() const;
+    const vector<Car> &getAllCars() const;
     void addCar(const Car &car);
 
-    void save(); // ⬅ додай
-    void load(); // необов’язково, але логічно
+    void save();
+    void load();
     Car findById(int &id);
     bool removeCar(int &id);
 };

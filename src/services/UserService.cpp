@@ -1,7 +1,9 @@
 #include "services/UserService.h"
 #include <optional>
 
-bool UserService::registerUser(const std::string &name, const std::string &email, const std::string &password)
+using namespace std;
+
+bool UserService::registerUser(const string &name, const string &email, const string &password)
 {
     const auto &users = repository.getAllUsers();
     for (const auto &user : users)
@@ -20,7 +22,7 @@ bool UserService::registerUser(const std::string &name, const std::string &email
     return true;
 }
 
-std::optional<User> UserService::findUserByCredentials(const std::string &email, const std::string &password)
+optional<User> UserService::findUserByCredentials(const string &email, const string &password)
 {
     const auto &users = repository.getAllUsers();
 
@@ -32,12 +34,12 @@ std::optional<User> UserService::findUserByCredentials(const std::string &email,
         }
     }
 
-    return std::nullopt;
+    return nullopt;
 }
 
-std::optional<User> UserService::updateUser(int id, const std::string &name, const std::string &email, const std::string &password)
+optional<User> UserService::updateUser(int id, const string &name, const string &email, const string &password)
 {
-    auto &users = repository.getAllUsersRef(); // 🔥 важливо: посилання!
+    auto &users = repository.getAllUsersRef();
 
     for (auto &user : users)
     {
@@ -54,37 +56,33 @@ std::optional<User> UserService::updateUser(int id, const std::string &name, con
         }
     }
 
-    return std::nullopt;
+    return nullopt;
 }
 
-std::vector<int> UserService::toggleFavorite(int userId, int carId)
+vector<int> UserService::toggleFavorite(int userId, int carId)
 {
-    auto &users = repository.getAllUsersRef(); // Беремо посилання на вектор юзерів
+    auto &users = repository.getAllUsersRef();
 
     for (auto &user : users)
     {
         if (user.getId() == userId)
         {
-            std::vector<int> favs = user.getFavorites();
-
-            // Перевіряємо, чи є вже це авто в списку
-            auto it = std::find(favs.begin(), favs.end(), carId);
+            vector<int> favs = user.getFavorites();
+            auto it = find(favs.begin(), favs.end(), carId);
 
             if (it != favs.end())
             {
-                // ВЖЕ Є -> ВИДАЛЯЄМО
                 favs.erase(it);
             }
             else
             {
-                // НЕМАЄ -> ДОДАЄМО
                 favs.push_back(carId);
             }
 
-            user.setFavorites(favs); // Оновлюємо юзера
-            repository.save();       // Зберігаємо у файл
+            user.setFavorites(favs);
+            repository.save();
             return favs;
         }
     }
-    throw std::runtime_error("User not found");
+    throw runtime_error("User not found");
 }
