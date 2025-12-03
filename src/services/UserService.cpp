@@ -86,3 +86,8 @@ vector<int> UserService::toggleFavorite(int userId, int carId)
     }
     throw runtime_error("User not found");
 }
+
+vector<Reservation> UserService::getUserReservations(int userId)
+{
+    return reservationRepository.getByUserId(userId);
+}

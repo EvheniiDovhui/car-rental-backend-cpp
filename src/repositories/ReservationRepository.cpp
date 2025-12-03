@@ -15,7 +15,7 @@ void ReservationRepository::add(const Reservation &res)
     {
         newRes.id = 1;
         nextId = 2;
-    }
+    }   
     else
     {
         newRes.id = reservations.back().id + 1;
@@ -28,6 +28,19 @@ void ReservationRepository::add(const Reservation &res)
 vector<Reservation> ReservationRepository::getAll()
 {
     return reservations;
+}
+
+vector<Reservation> ReservationRepository::getByUserId(int userId)
+{
+    vector<Reservation> result;
+    for (const auto &r : reservations)
+    {
+        if (r.userId == userId)
+        {
+            result.push_back(r);
+        }
+    }
+    return result;
 }
 
 void ReservationRepository::save()
