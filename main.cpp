@@ -105,6 +105,14 @@ int main()
             startStream >> std::get_time(&startTm, "%Y-%m-%d");
             endStream >> std::get_time(&endTm, "%Y-%m-%d");
             
+            // Check for parsing errors
+            if (startStream.fail() || endStream.fail()) {
+                crow::json::wvalue err;
+                err["status"] = "error";
+                err["error"] = "Invalid date format. Expected YYYY-MM-DD";
+                return crow::response(400, err);
+            }
+            
             // Convert to time_point for accurate day calculation
             auto startTime = std::chrono::system_clock::from_time_t(std::mktime(&startTm));
             auto endTime = std::chrono::system_clock::from_time_t(std::mktime(&endTm));
