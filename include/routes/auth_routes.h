@@ -55,29 +55,30 @@ void initAuthRoutes(App &app, UserService &service)
 
     CROW_ROUTE(app, "/api/profile").methods("PUT"_method)([&service](const crow::request &req)
                                                           {
-    auto data = crow::json::load(req.body);
-    if (!data)
-        return crow::json::wvalue({{"status", "error"}, {"error", "Invalid JSON"}});
+        auto data = crow::json::load(req.body);
+        if (!data)
+            return crow::json::wvalue({{"status", "error"}, {"error", "Invalid JSON"}});
 
-    int id = data["id"].i();
+        int id = data["id"].i();
 
-    string name = data["name"].s();
-    string email = data["email"].s();
-    string password = data["password"].s();
+        string name = data["name"].s();
+        string email = data["email"].s();
+        string password = data["password"].s();
 
-    auto userOpt = service.updateUser(id, name, email, password);
+        auto userOpt = service.updateUser(id, name, email, password);
 
-    if (!userOpt.has_value())
-        return crow::json::wvalue({{"status", "error"}, {"error", "Update failed"}});
+        if (!userOpt.has_value())
+            return crow::json::wvalue({{"status", "error"}, {"error", "Update failed"}});
 
-    auto user = userOpt.value();
+        auto user = userOpt.value();
 
-    return crow::json::wvalue({
-        {"status", "success"},
-        {"user", {
-            {"id", user.getId()},
-            {"name", user.getName()},
-            {"email", user.getEmail()}
-        }}
-    }); });
+        return crow::json::wvalue({
+            {"status", "success"},
+            {"user", {
+                {"id", user.getId()},
+                {"name", user.getName()},
+                {"email", user.getEmail()}
+            }}
+        });
+    });
 }

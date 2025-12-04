@@ -9,6 +9,8 @@
 #include "controllers/CarController.h"
 #include "models/Reservation.h"
 #include "repositories/ReservationRepository.h"
+#include "repositories/OptionalRepository.h"
+#include "models/GenericOptionalAddon.h"
 
 using namespace std;
 
@@ -28,7 +30,9 @@ int main()
     UserRepository userRepository;
     userRepository.load();
 
-    UserService userService(userRepository);
+    ReservationRepository reservationRepo;
+
+    UserService userService(userRepository, reservationRepo);
     initAuthRoutes(app, userService);
 
     CarRepository carRepo;
@@ -36,8 +40,30 @@ int main()
     CarService carService(carRepo);
     CarController carController(carService);
     registerCarRoutes(app, carController);
+    OptionalRepository optionalRepo;
+    optionalRepo.load("data/reservation_addons.json");
 
-    ReservationRepository reservationRepo;
+    CROW_ROUTE(app, "/api/addons").methods("GET"_method)([]() {
+        std::ifstream file("data/addons.json");
+        if (!file.is_open())
+        {
+            return crow::response(500, "addons.json not found");
+        }
+
+        std::stringstream buffer;
+        buffer << file.rdbuf();
+        std::string content = buffer.str();
+
+        auto json = crow::json::load(content);
+        if (!json || json.t() != crow::json::type::List)
+        {
+            return crow::response(500, "Invalid addons.json format");
+        }
+
+        crow::json::wvalue res;
+        res = json;
+        return crow::response(200, res);
+    });
 
     CROW_ROUTE(app, "/api/reserve").methods("POST"_method)([&](const crow::request &req)
                                                            {
@@ -75,11 +101,35 @@ int main()
             newRes.totalPrice = price;
 
             reservationRepo.add(newRes);
+            auto all = reservationRepo.getAll();
+            int createdId = all.empty() ? 0 : all.back().id;
+
+            // зберігаємо опції, якщо вони надійшли
+            if (json.has("addons") && json["addons"].t() == crow::json::type::List && createdId > 0)
+            {
+                for (const auto &a : json["addons"])
+                {
+                    if (!a.has("name") || !a.has("pricePerDay"))
+                        continue;
+
+                    string addonName = a["name"].s();
+                    double addonPrice = 0.0;
+                    if (a["pricePerDay"].t() == crow::json::type::Number)
+                        addonPrice = a["pricePerDay"].d();
+                    else
+                        addonPrice = (double)a["pricePerDay"].i();
+
+                    GenericOptionalAddon *addon = new GenericOptionalAddon(0, addonName, addonPrice);
+                    optionalRepo.addOptionalAddon((unsigned int)createdId, addon);
+                }
+
+                optionalRepo.save("data/reservation_addons.json");
+            }
 
             crow::json::wvalue res;
             res["status"] = "success";
             res["reservation"] = newRes.toJSON();
-            
+
             return crow::response(200, res);
 
         } catch (const exception& e) {
