@@ -1,0 +1,15 @@
+# Build artifacts
+build/
+*.o
+*.exe
+
+# Dependencies
+libs/*/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
