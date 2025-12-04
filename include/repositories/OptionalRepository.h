@@ -7,7 +7,6 @@
 using namespace std;
 
 class OptionalRepository {
-    // key = reservationId
     multimap<unsigned int, OptionalAddon*> optionalAddons;
 
 public:
