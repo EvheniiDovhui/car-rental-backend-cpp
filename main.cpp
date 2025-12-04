@@ -11,7 +11,9 @@
 #include "repositories/ReservationRepository.h"
 #include "repositories/OptionalRepository.h"
 #include "models/GenericOptionalAddon.h"
-#include <cstdio>
+#include <chrono>
+#include <sstream>
+#include <iomanip>
 
 using namespace std;
 
@@ -94,14 +96,22 @@ int main()
                 return crow::response(409, err);
             }
 
-            // Calculate number of days for the reservation
-            int startYear, startMonth, startDay;
-            int endYear, endMonth, endDay;
-            sscanf(start.c_str(), "%d-%d-%d", &startYear, &startMonth, &startDay);
-            sscanf(end.c_str(), "%d-%d-%d", &endYear, &endMonth, &endDay);
+            // Calculate number of days for the reservation using proper date parsing
+            std::tm startTm = {};
+            std::tm endTm = {};
+            std::istringstream startStream(start);
+            std::istringstream endStream(end);
             
-            // Simple day calculation (ignores month lengths, good enough for pricing)
-            int days = (endYear - startYear) * 365 + (endMonth - startMonth) * 30 + (endDay - startDay);
+            startStream >> std::get_time(&startTm, "%Y-%m-%d");
+            endStream >> std::get_time(&endTm, "%Y-%m-%d");
+            
+            // Convert to time_point for accurate day calculation
+            auto startTime = std::chrono::system_clock::from_time_t(std::mktime(&startTm));
+            auto endTime = std::chrono::system_clock::from_time_t(std::mktime(&endTm));
+            
+            // Calculate days difference
+            auto duration = std::chrono::duration_cast<std::chrono::hours>(endTime - startTime);
+            int days = duration.count() / 24;
             if (days < 1) days = 1; // At least 1 day
             
             // Start with base price from request
