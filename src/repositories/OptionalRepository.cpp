@@ -1,7 +1,9 @@
 #include "repositories/OptionalRepository.h"
+#include "models/GenericOptionalAddon.h"
 #include <crow/json.h>
 #include <fstream>
 #include <sstream>
+#include <stdexcept>
 
 using namespace std;
 
@@ -27,13 +29,17 @@ void OptionalRepository::save(const string &filePath) const
 
     ofstream file(filePath);
     if (!file.is_open())
-        return;
+        throw runtime_error("Failed to open file for saving: " + filePath);
 
     file << arr.dump();
 }
 
 void OptionalRepository::load(const string &filePath)
 {
+    // Clean up existing addons before clearing the map
+    for (auto &pair : optionalAddons) {
+        delete pair.second;
+    }
     optionalAddons.clear();
 
     ifstream file(filePath);
@@ -62,9 +68,8 @@ void OptionalRepository::load(const string &filePath)
         else
             price = (double)item["price"].i();
 
-        // OptionalAddon is abstract; do not instantiate it directly.
-        // Replace nullptr with an instance of a concrete subclass when available.
-        OptionalAddon *addon = nullptr;
+        // Create a concrete GenericOptionalAddon instance from loaded data
+        OptionalAddon *addon = new GenericOptionalAddon(0, name, price);
         optionalAddons.emplace(reservationId, addon);
     }
 }

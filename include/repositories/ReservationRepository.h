@@ -14,7 +14,7 @@ class ReservationRepository
 public:
     ReservationRepository();
 
-    void add(const Reservation &res);
+    int add(const Reservation &res);
     vector<Reservation> getAll();
     vector<Reservation> getByUserId(int userId);
     void save();

@@ -11,6 +11,14 @@ class OptionalRepository {
 
 public:
     OptionalRepository() = default;
+    
+    ~OptionalRepository() {
+        // Clean up all allocated addons
+        for (auto &pair : optionalAddons) {
+            delete pair.second;
+        }
+        optionalAddons.clear();
+    }
 
     void addOptionalAddon(unsigned int reservationId, OptionalAddon *addon)
     {

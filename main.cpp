@@ -11,6 +11,7 @@
 #include "repositories/ReservationRepository.h"
 #include "repositories/OptionalRepository.h"
 #include "models/GenericOptionalAddon.h"
+#include <cstdio>
 
 using namespace std;
 
@@ -93,18 +94,48 @@ int main()
                 return crow::response(409, err);
             }
 
+            // Calculate number of days for the reservation
+            int startYear, startMonth, startDay;
+            int endYear, endMonth, endDay;
+            sscanf(start.c_str(), "%d-%d-%d", &startYear, &startMonth, &startDay);
+            sscanf(end.c_str(), "%d-%d-%d", &endYear, &endMonth, &endDay);
+            
+            // Simple day calculation (ignores month lengths, good enough for pricing)
+            int days = (endYear - startYear) * 365 + (endMonth - startMonth) * 30 + (endDay - startDay);
+            if (days < 1) days = 1; // At least 1 day
+            
+            // Start with base price from request
+            double totalPrice = price;
+            
+            // Calculate addon costs if provided
+            if (json.has("addons") && json["addons"].t() == crow::json::type::List)
+            {
+                for (const auto &a : json["addons"])
+                {
+                    if (!a.has("name") || !a.has("pricePerDay"))
+                        continue;
+
+                    double addonPrice = 0.0;
+                    if (a["pricePerDay"].t() == crow::json::type::Number)
+                        addonPrice = a["pricePerDay"].d();
+                    else
+                        addonPrice = (double)a["pricePerDay"].i();
+
+                    // Add addon price * days to total
+                    totalPrice += addonPrice * days;
+                }
+            }
+
             Reservation newRes;
             newRes.userId = userId;
             newRes.carId = carId;
             newRes.startDate = start;
             newRes.endDate = end;
-            newRes.totalPrice = price;
+            newRes.totalPrice = totalPrice;
 
-            reservationRepo.add(newRes);
-            auto all = reservationRepo.getAll();
-            int createdId = all.empty() ? 0 : all.back().id;
+            int createdId = reservationRepo.add(newRes);
 
-            // зберігаємо опції, якщо вони надійшли
+            // Save addons if they were provided
             if (json.has("addons") && json["addons"].t() == crow::json::type::List && createdId > 0)
             {
                 for (const auto &a : json["addons"])
@@ -125,6 +156,9 @@ int main()
 
                 optionalRepo.save("data/reservation_addons.json");
             }
+            
+            // Update newRes with the created ID for response
+            newRes.id = createdId;
 
             crow::json::wvalue res;
             res["status"] = "success";

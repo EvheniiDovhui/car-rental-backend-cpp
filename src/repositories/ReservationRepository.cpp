@@ -8,14 +8,14 @@ ReservationRepository::ReservationRepository()
     load();
 }
 
-void ReservationRepository::add(const Reservation &res)
+int ReservationRepository::add(const Reservation &res)
 {
     Reservation newRes = res;
     if (reservations.empty())
     {
         newRes.id = 1;
         nextId = 2;
-    }   
+    }
     else
     {
         newRes.id = reservations.back().id + 1;
@@ -23,6 +23,7 @@ void ReservationRepository::add(const Reservation &res)
     }
     reservations.push_back(newRes);
     save();
+    return newRes.id;
 }
 
 vector<Reservation> ReservationRepository::getAll()
