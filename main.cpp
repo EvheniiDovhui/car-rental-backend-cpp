@@ -43,7 +43,31 @@ int main()
     OptionalRepository optionalRepo;
     optionalRepo.load("data/reservation_addons.json");
 
-    CROW_ROUTE(app, "/api/addons").methods("GET"_method)([]() {
+    CROW_ROUTE(app, "/api/user-reservations").methods("GET"_method)([&reservationRepo](const crow::request &req)
+                                                                    {
+        const char *idStr = req.url_params.get("userId");
+        if (!idStr)
+        {
+            return crow::response(400, "Missing userId parameter");
+        }
+
+        int userId = atoi(idStr);
+        auto userReservations = reservationRepo.getByUserId(userId);
+
+        crow::json::wvalue res;
+        res["status"] = "success";
+
+        crow::json::wvalue arr;
+        for (size_t i = 0; i < userReservations.size(); ++i)
+        {
+            arr[i] = userReservations[i].toJSON();
+        }
+        res["reservations"] = move(arr);
+
+        return crow::response(200, res); });
+
+    CROW_ROUTE(app, "/api/addons").methods("GET"_method)([]()
+                                                         {
         std::ifstream file("data/addons.json");
         if (!file.is_open())
         {
@@ -62,8 +86,7 @@ int main()
 
         crow::json::wvalue res;
         res = json;
-        return crow::response(200, res);
-    });
+        return crow::response(200, res); });
 
     CROW_ROUTE(app, "/api/reserve").methods("POST"_method)([&](const crow::request &req)
                                                            {
@@ -104,7 +127,6 @@ int main()
             auto all = reservationRepo.getAll();
             int createdId = all.empty() ? 0 : all.back().id;
 
-            // зберігаємо опції, якщо вони надійшли
             if (json.has("addons") && json["addons"].t() == crow::json::type::List && createdId > 0)
             {
                 for (const auto &a : json["addons"])
